@@ -1,5 +1,8 @@
 package com.github.catalogo.domain.category;
 
+import com.github.catalogo.domain.validation.Error;
+import com.github.catalogo.domain.validation.ValidationHandler;
+
 import java.time.Instant;
 
 public class Category {
@@ -59,6 +62,17 @@ public class Category {
                 aCategory.deletedAt()
         );
     }
+
+    public Category validate(final ValidationHandler aHandler) {
+        if (id == null || id.isBlank()) {
+            aHandler.append(new Error("'id' should not be empty"));
+        }
+        if (name == null || name.isBlank()) {
+            aHandler.append(new Error("'name' should not be empty"));
+        }
+        return this;
+    }
+
     public String id() {
         return id;
     }
