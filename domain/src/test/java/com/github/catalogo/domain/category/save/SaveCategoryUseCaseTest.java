@@ -12,10 +12,10 @@ import org.mockito.Mock;
 
 import java.util.UUID;
 
-import static javax.management.Query.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class SaveCategoryUseCaseTest extends UnitTest {
@@ -78,5 +78,19 @@ public class SaveCategoryUseCaseTest extends UnitTest {
         assertEquals(expectedErrorCount, actualError.getErrors().size());
         assertEquals(expectedErrorMessage, actualError.getErrors().get(0).message());
         verify(categoryGateway, never()).save(eq(aCategory));
+    }
+
+    @Test
+    public void givenNullCategory_whenCallsSave_shouldReturnError() {
+        // given
+        final Category aCategory = null;
+        final var expectedErrorCount = 1;
+        final var expectedErrorMessage = "'aCategory' cannot be null";
+        // when
+        final var actualError = assertThrows(DomainException.class, () -> this.useCase.execute(aCategory));
+        // then
+        assertEquals(expectedErrorCount, actualError.getErrors().size());
+        assertEquals(expectedErrorMessage, actualError.getErrors().get(0).message());
+        verify(categoryGateway, times(0)).save(eq(aCategory));
     }
 }
