@@ -1,4 +1,4 @@
-package com.github.catalogo.domain.category.save;
+package com.github.catalogo.application.category.save;
 
 import com.github.catalogo.application.UseCase;
 import com.github.catalogo.domain.category.Category;

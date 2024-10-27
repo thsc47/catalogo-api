@@ -7,5 +7,5 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 @Tag("unitTest")
-public abstract class UseCaseTest implements BeforeEachCallback {
+public abstract class UseCaseTest {
 }
