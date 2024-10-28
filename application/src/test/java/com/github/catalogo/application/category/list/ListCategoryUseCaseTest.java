@@ -31,30 +31,37 @@ public class ListCategoryUseCaseTest extends UseCaseTest {
                 Fixture.Categories.lives(),
                 Fixture.Categories.aulas()
         );
+
         final var expectedItems = categories.stream()
                 .map(ListCategoryOutput::from)
                 .toList();
+
         final var expectedPage = 0;
         final var expectedPerPage = 10;
         final var expectedTerms = "Algo";
         final var expectedSort = "name";
         final var expectedDirection = "asc";
         final var expectedItemsCount = 2;
+
         final var aQuery =
                 new CategorySearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection);
+
         final var pagination =
                 new Pagination<>(expectedPage, expectedPerPage, categories.size(), categories);
+
         when(this.categoryGateway.findAll(any()))
                 .thenReturn(pagination);
+
         // when
         final var actualOutput = this.useCase.execute(aQuery);
+
         // then
-        assertEquals(expectedPage, actualOutput.currentPage());
-        assertEquals(expectedPerPage, actualOutput.perPage());
-        assertEquals(expectedItemsCount, actualOutput.items().size());
+        assertEquals(expectedPage, actualOutput.meta().currentPage());
+        assertEquals(expectedPerPage, actualOutput.meta().perPage());
+        assertEquals(expectedItemsCount, actualOutput.meta().total());
         assertTrue(
-                expectedItems.size() == actualOutput.items().size() &&
-                        expectedItems.containsAll(actualOutput.items())
+                expectedItems.size() == actualOutput.data().size() &&
+                        expectedItems.containsAll(actualOutput.data())
         );
     }
 }
