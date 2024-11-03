@@ -66,17 +66,3 @@ jobs:
           echo "Branch     ---> ${{ github.head_ref || github.ref_name }}"
           echo "Run number ---> ${{ github.run_number }}"
           echo "Tag        ---> ${{ env.BUILD_TAG }}"
-      # 7. Log in to DockerHub
-      - name: Log in to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_HUB_USER }}
-          password: ${{ secrets.DOCKER_HUB_PWD }}
-      # 8. Build & Deploy da imagem
-      - name: Build & push da imagem do docker
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          push: true
-          build-args: VERSION=${{ env.BUILD_TAG }}
-          tags: ${{ env.IMAGE_NAME }}:${{ env.BUILD_TAG }}
