@@ -6,6 +6,7 @@ import com.github.catalogo.domain.Fixture;
 import com.github.catalogo.domain.category.CategorySearchQuery;
 import com.github.catalogo.domain.category.Pagination;
 import com.github.catalogo.infrastructure.GraphQLControllerTest;
+import com.github.catalogo.infrastructure.configuration.category.graphql.CategoryGraphQLController;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@GraphQLControllerTest
+@GraphQLControllerTest(controllers = CategoryGraphQLController.class)
 public class CategoryGraphQLControllerTest {
 
     @MockBean
@@ -77,30 +78,47 @@ public class CategoryGraphQLControllerTest {
                 ListCategoryOutput.from(Fixture.Categories.lives()),
                 ListCategoryOutput.from(Fixture.Categories.aulas())
         );
+
         final var expectedPage = 2;
         final var expectedPerPage = 15;
         final var expectedSort = "id";
         final var expectedDirection = "desc";
         final var expectedSearch = "asd";
+
         when(this.listCategoryUseCase.execute(any()))
                 .thenReturn(new Pagination<>(expectedPage, expectedPerPage, expectedCategories.size(), expectedCategories));
+
         final var query = """
-                {
-                  categories(search: "%s", page: %s, perPage: %s, sort: "%s", direction: "%s") {
+                query AllCategories($search: String, $page: Int, $perPage: Int, $sort: String, $direction: String) {
+                                
+                  categories(search: $search, page: $page, perPage: $perPage, sort: $sort, direction: $direction) {
                     id
                     name
                   }
                 }
-                """.formatted(expectedSearch, expectedPage, expectedPerPage, expectedSort, expectedDirection);
-        final var res = this.graphql.document(query).execute();
+                """;
+
+        final var res = this.graphql.document(query)
+                .variable("search", expectedSearch)
+                .variable("page", expectedPage)
+                .variable("perPage", expectedPerPage)
+                .variable("sort", expectedSort)
+                .variable("direction", expectedDirection)
+                .execute();
+
         final var actualCategories = res.path("categories")
                 .entityList(ListCategoryOutput.class)
                 .get();
-        assertTrue(actualCategories.size() == expectedCategories.size()
+
+        assertTrue(
+                actualCategories.size() == expectedCategories.size()
                         && actualCategories.containsAll(expectedCategories)
         );
+
         final var capturer = ArgumentCaptor.forClass(CategorySearchQuery.class);
+
         verify(this.listCategoryUseCase).execute(capturer.capture());
+
         final var actualQuery = capturer.getValue();
         assertEquals(expectedPage, actualQuery.page());
         assertEquals(expectedPerPage, actualQuery.perPage());

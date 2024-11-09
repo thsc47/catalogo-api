@@ -18,7 +18,6 @@ import java.lang.annotation.Target;
 @Inherited
 @ActiveProfiles("test-integration")
 @GraphQlTest
-@Import(ObjectMapperConfig.class)
 @Tag("integrationTest")
 public @interface GraphQLControllerTest {
     @AliasFor(annotation = GraphQlTest.class, attribute = "controllers")

@@ -14,7 +14,6 @@ import java.lang.annotation.*;
 @Inherited
 @ActiveProfiles("test-integration")
 @WebMvcTest
-@Import(ObjectMapperConfig.class)
 @Tag("integrationTest")
 public @interface ControllerTest {
 
