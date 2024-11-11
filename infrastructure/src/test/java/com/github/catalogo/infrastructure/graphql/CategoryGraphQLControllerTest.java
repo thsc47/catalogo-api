@@ -2,6 +2,7 @@ package com.github.catalogo.infrastructure.graphql;
 
 import com.github.catalogo.application.category.list.ListCategoryOutput;
 import com.github.catalogo.application.category.list.ListCategoryUseCase;
+import com.github.catalogo.application.category.save.SaveCategoryUseCase;
 import com.github.catalogo.domain.Fixture;
 import com.github.catalogo.domain.category.CategorySearchQuery;
 import com.github.catalogo.domain.category.Pagination;
@@ -26,6 +27,9 @@ public class CategoryGraphQLControllerTest {
 
     @MockBean
     private ListCategoryUseCase listCategoryUseCase;
+
+    @MockBean
+    private SaveCategoryUseCase saveCategoryUseCase;
 
     @Autowired
     private GraphQlTester graphql;
